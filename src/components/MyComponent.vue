@@ -1,14 +1,17 @@
 <template>
     <div>
-        My template is loaded: {{ isLoaded }}
+        My template is loaded: {{ message }}
     </div>
 </template>
 
 <script>
     export default {
         props: {
-            isLoaded: true
-        }
+            message: {
+                type: String,
+                default: 'Hello World!'
+            },
+        },
     }
 </script>
 
