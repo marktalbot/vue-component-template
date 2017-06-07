@@ -7,19 +7,16 @@ const ACTIONS = {
 
 export default class Preloader {
 
-    constructor({ namespace, version, assets, scope = '/', worker = '/worker.js', debug = false}) {
+    constructor({ namespace, version, assets, scope, worker, debug }) {
         this.namespace = namespace;
-        this.version   = version;
-        this.assets    = assets;
-        this.scope     = scope;
-        this.worker    = worker;
-        this.debug     = debug;
-        this.messageChannel;
-        
-        console.log(this.debug, arguments)
-
+        this.version = version;
+        this.assets = assets;
+        this.scope = scope;
+        this.worker = worker;
+        this.debug = debug;
         this.numberOfAssetsLoaded = 0;
-
+        
+        this.messageChannel;
         this.bootstrap();
     }
 
@@ -55,6 +52,7 @@ export default class Preloader {
 
     registerServiceWorker() {
         return navigator.serviceWorker.register(this.worker, { scope: this.scope }).then(() => {
+            this.debug && console.log('🔧 Registered service worker');
             this.emit('serviceWorker.register.success');
             return navigator.serviceWorker.ready;
         }).catch((error) => {
@@ -64,14 +62,14 @@ export default class Preloader {
     }
 
     initalizeMessaging() {
-        console.log('init messaging...');
+        this.debug && console.log('🔧 Initalized messaging');
         this.messageChannel = new MessageChannel();
-        // Handle message events...
+        
         this.messageChannel.port1.onmessage = this.handleMessageFromServiceWorker.bind(this);
     }
 
     initalizeServiceWorker() {
-        console.log('init service worker...');
+        this.debug && this.debug && console.log('🔧 Initalized service worker');
         navigator.serviceWorker.controller.postMessage({
             type    : ACTIONS.INITIALIZE,
             payload : {
@@ -84,7 +82,7 @@ export default class Preloader {
     }
 
     preloadAssets() {
-        console.log('preload asset...');
+        this.debug && this.debug && console.log('🔧 Preloading assets...');
         navigator.serviceWorker.controller.postMessage({
             type    : ACTIONS.PRELOAD,
             payload : this.assets,

@@ -26,7 +26,6 @@ const ACTIONS = {
     RESOURCE_PRELOADED   : 'RESOURCE_PRELOADED',
 }
 
-//-------------------------- good
 const CACHE = {
     namespace : undefined,
     version   : undefined,
@@ -36,7 +35,6 @@ const CACHE = {
 };
 let messageChannelPort;
 let debug = false;
-//-------------------------- good
 
 self.addEventListener('install', (event) => {
     // Perform install stuff (open caches, etc)
@@ -52,48 +50,36 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-    console.log('EVENT: activate');
+    //@TODO: Build this out more
 });
 
 self.addEventListener('message', (event) => {
-   console.log('EVENT: message', event);
    event.waitUntil(handleMessage(event.data));
 });
 
 // @TODO: Temp code from Google docs.... switch out
 self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {
-        console.log('fetching...........................')
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      }
-    )
-  );
+    event.respondWith(
+        caches.match(event.request)
+            .then(function(response) {
+                console.log('fetching...........................');
+                if (response) {
+                    return response;
+                }
+                return fetch(event.request);
+            }
+        )
+    );
 });
 
-// const reducer = () => {
-//     switch (action === 'TEST1') {
-//         case label_1:
-//             // statements_1
-//             break;
-//         default:
-//             // statements_def
-//             break;
-//     }
-// }
+// @TODO: Clear out old chaches with same namespace
 
 function handleMessage(action) {
     switch (action.type) {
         case 'INITIALIZE':
-            console.log('handleMessage: INITIALIZE', action.payload);
             initialize(action.payload);
             break;
         case 'PRELOAD':
-            console.log('handleMessage: PRELOAD', action.payload);
             preloadAll(CACHE.name, action.payload);
             break;
         default:
@@ -102,19 +88,14 @@ function handleMessage(action) {
 }
 
 function initialize(data) {
-    console.log('function initialize()', data);
     CACHE.namespace    = data.namespace;
     CACHE.version      = data.version;
     debug              = data.debug;
     messageChannelPort = data.messageChannelPort;
-    
-    console.log(CACHE);
-    console.log('CACHE', CACHE.name);
 }
 
 function preload(cache, asset) {
     // @TODO need to build this out more
-    console.log(asset)
     return cache.add(asset).then(() => {
         messageChannelPort.postMessage({
             type    : ACTIONS.RESOURCE_PRELOADED,
