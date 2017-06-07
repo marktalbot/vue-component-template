@@ -1,3 +1,3 @@
-import MyComponent from './components/MyComponent.vue'
+import VueOfflinePreloader from './components/VueOfflinePreloader.vue'
 
-export default MyComponent;
+export default VueOfflinePreloader;
